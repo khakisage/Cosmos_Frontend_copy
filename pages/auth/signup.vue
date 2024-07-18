@@ -1,12 +1,19 @@
 <script setup lang="ts">
-import { object, string, type InferType } from "yup";
-import type { FormSubmitEvent } from "#ui/types";
+import { object, string, type InferType } from 'yup';
+import type { FormSubmitEvent } from '#ui/types';
+
+// definePageMeta({
+//   layout: 'false',
+// });
+
+const config = useRuntimeConfig();
+const apiBase = config.apiBase;
 
 const schema = object({
-  userId: string().required("Required"),
-  password: string().min(8, "Must be at least 8 characters").required("Required"),
-  userName: string().required("Required"),
-  email: string().email("Invalid email").required("Required"),
+  userId: string().required('Required'),
+  password: string().min(8, '비밀번호는 영문+숫자 8자 이상').required('Required'),
+  userName: string().required('Required'),
+  email: string().email('이메일 양식이 일치하지 않음').required('Required'),
 });
 
 type Schema = InferType<typeof schema>;
@@ -22,22 +29,13 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   // Do something with event.data
   // console.log(event.data.email);
   // 회원가입 요청.
-  const response = await $fetch("http://localhost:3001/user", {
-    method: "POST",
+  const response = await $fetch(apiBase + '/user', {
+    method: 'POST',
     body: JSON.stringify(event.data),
   })
     .then((res) => console.log(res))
     .catch((error) => console.log(error));
 }
-
-// async function validateEmail(email: string) {
-//   try {
-//     await schema.validateAt("email", { email });
-//     return true;
-//   } catch (error) {
-//     return false;
-//   }
-// }
 </script>
 
 <template>

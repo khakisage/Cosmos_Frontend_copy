@@ -2,9 +2,12 @@
 import { object, string, type InferType } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
 
+const config = useRuntimeConfig();
+const apiBase = config.apiBase;
+
 const schema = object({
   userId: string().required("Required"),
-  password: string().min(8, "Must be at least 8 characters").required("Required"),
+  password: string().min(8, "비밀번호는 영문+숫자 8자 이상").required("Required"),
 });
 
 type Schema = InferType<typeof schema>;
@@ -16,17 +19,13 @@ const state = reactive({
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   // Do something with event.data
-  console.log(event.data);
+  const response = await $fetch(apiBase + "/auth", {
+    method: "POST",
+    body: JSON.stringify(event.data),
+  })
+    .then((res) => console.log(res))
+    .catch((error) => console.log(error));
 }
-
-// async function validateEmail(email: string) {
-//   try {
-//     await schema.validateAt("email", { email });
-//     return true;
-//   } catch (error) {
-//     return false;
-//   }
-// }
 </script>
 
 <template>
